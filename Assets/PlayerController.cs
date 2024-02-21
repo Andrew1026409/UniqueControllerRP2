@@ -10,6 +10,11 @@ public class PlayerControler : MonoBehaviour
 
     private Vector2 movementInput; // Input for movement
     private Vector2 lookInput; // Input for looking
+    int jumping;
+    float airTime;
+    bool grounded;
+    bool wasGrounded;
+    public float landedTime;
 
     void Update()
     {
@@ -22,10 +27,6 @@ public class PlayerControler : MonoBehaviour
         right.Normalize();
         Vector3 movement = forward * movementInput.y + right * movementInput.x;
 
-        // Move the GameObject
-        GetComponent<CharacterController>().Move(movement * moveSpeed * Time.deltaTime);
-       // transform.Translate(movement * moveSpeed * Time.deltaTime, Space.World);
-
         // Get look input
         float lookHorizontal = lookInput.x;
         float lookVertical = lookInput.y;
@@ -34,20 +35,79 @@ public class PlayerControler : MonoBehaviour
         float yaw = lookHorizontal * lookSpeed * Time.deltaTime;
         float pitch = -lookVertical * lookSpeed * Time.deltaTime; // Inverted for typical first-person controls
 
-        // Rotate the GameObject
-        transform.Rotate(Vector3.up, yaw);
+        if (jumping == 0 & landedTime == 0 & grounded)
+        {
+            // Rotate the GameObject
+            transform.Rotate(Vector3.up, yaw);
 
-        // Get the current camera rotation
-        Quaternion cameraRotation = Camera.main.transform.rotation;
+            // Move the GameObject
+            GetComponent<Rigidbody>().AddForce(movement * moveSpeed);
+            // transform.Translate(movement * moveSpeed * Time.deltaTime, Space.World);
 
-        // Apply pitch rotation to the camera
-        Camera.main.transform.rotation = Quaternion.Euler(cameraRotation.eulerAngles.x + pitch, cameraRotation.eulerAngles.y, cameraRotation.eulerAngles.z);
+            // Get the current camera rotation
+            Quaternion cameraRotation = Camera.main.transform.rotation;
+
+            // Apply pitch rotation to the camera
+            Camera.main.transform.rotation = Quaternion.Slerp(Camera.main.transform.rotation, Quaternion.Euler(cameraRotation.eulerAngles.x + pitch, cameraRotation.eulerAngles.y, cameraRotation.eulerAngles.z), 0.8f);
+        }
+
+        // THis checks if on the ground
+        RaycastHit CheckGround = new RaycastHit();
+        if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.down), out CheckGround, 0.6f))
+        {
+            grounded = true;
+        }
+        else
+        {
+            // This determines how long you are in the air for for fall damage or a bigger landing effect
+            grounded = false;
+            airTime = Time.time;
+        }
+
+        // This calls the landing sequence
+        if (Time.time > 0.5f & grounded & !wasGrounded & airTime > 0)
+        {
+            landedTime = Time.time;
+            // Checks how long you are in the air for
+            if (airTime > 0)
+                GetComponentInChildren<Animator>().CrossFadeInFixedTime("Land", 0.1f);
+        }
+        // This resets the landing sequence after it is done
+        if (Time.time >= landedTime + 1)
+            landedTime = 0;
+        wasGrounded = grounded;
+
+        // This controls where the camera parent is and the camera shake
+        if (jumping == 1)
+            Camera.main.transform.parent.localPosition = Vector3.Lerp(Camera.main.transform.parent.localPosition, new Vector3(0, -0.15f, 0), 0.01f);
+        else
+        {
+            if (landedTime > 0 & Time.time > landedTime + 0.08f)
+                Camera.main.transform.parent.localPosition = Vector3.Lerp(Camera.main.transform.parent.localPosition, new Vector3(0, -0.15f, 0), 0.01f);
+            else
+                Camera.main.transform.parent.localPosition = Vector3.Lerp(Camera.main.transform.parent.localPosition, new Vector3(0, 0, 0), 0.01f);
+        }
     }
 
     public void OnMove(InputAction.CallbackContext context)
     {
         // Get movement input from joystick
         movementInput = context.ReadValue<Vector2>();
+    }
+
+    public void OnJump(InputAction.CallbackContext context)
+    {
+        if (jumping == 0 & jumping == 0 & landedTime == 0 & grounded)
+            StartCoroutine(WaitJump());
+    }
+    // Make sure you call a StartCoroutine instead of a regular void
+    public IEnumerator WaitJump()
+    {
+        jumping = 1;
+        GetComponentInChildren<Animator>().CrossFadeInFixedTime("Jump", 0.1f);
+        yield return new WaitForSeconds(0.2f);
+        GetComponent<Rigidbody>().AddForce(Vector3.up * 4000);
+        jumping = 0;
     }
 
     public void OnLook(InputAction.CallbackContext context)
