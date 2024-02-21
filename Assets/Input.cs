@@ -48,17 +48,6 @@ public partial class @PlayerController: IInputActionCollection2, IDisposable
             ],
             ""bindings"": [
                 {
-                    ""name"": """",
-                    ""id"": ""2124f1bf-d1e4-4521-a55a-c12999169868"",
-                    ""path"": ""<HID::Logitech Extreme 3D pro>/stick"",
-                    ""interactions"": """",
-                    ""processors"": ""AxisDeadzone(min=0.125,max=0.925)"",
-                    ""groups"": """",
-                    ""action"": ""OnMove"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
                     ""name"": ""2D Vector"",
                     ""id"": ""c137d8ed-369b-4827-a313-7417b170c1be"",
                     ""path"": ""2DVector"",
@@ -83,7 +72,7 @@ public partial class @PlayerController: IInputActionCollection2, IDisposable
                 {
                     ""name"": ""down"",
                     ""id"": ""76a5e926-e04c-435f-aa0e-8d0b307b67e7"",
-                    ""path"": ""<Joystick>/stick/down"",
+                    ""path"": ""<HID::Logitech Extreme 3D pro>/stick/down"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -94,7 +83,7 @@ public partial class @PlayerController: IInputActionCollection2, IDisposable
                 {
                     ""name"": ""left"",
                     ""id"": ""c20a035f-6b93-42a8-89ac-28fae2959c58"",
-                    ""path"": ""<HID::Logitech Extreme 3D pro>/stick/x"",
+                    ""path"": ""<HID::Logitech Extreme 3D pro>/stick/left"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -105,7 +94,7 @@ public partial class @PlayerController: IInputActionCollection2, IDisposable
                 {
                     ""name"": ""right"",
                     ""id"": ""d020a9db-07dd-4e40-97e8-366d5bfbdcbe"",
-                    ""path"": ""<Joystick>/stick/right"",
+                    ""path"": ""<HID::Logitech Extreme 3D pro>/stick/right"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -116,11 +105,39 @@ public partial class @PlayerController: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""089c17bf-d4d5-47fc-b651-e2b7ab17a79f"",
-                    ""path"": ""<HID::Logitech Extreme 3D pro>/trigger"",
+                    ""path"": ""<Joystick>/trigger"",
                     ""interactions"": ""Tap(duration=0.1,pressPoint=0.1)"",
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""OnShoot"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
+        },
+        {
+            ""name"": ""Look"",
+            ""id"": ""c23613ab-dd47-426c-9d38-9d03c149a1e6"",
+            ""actions"": [
+                {
+                    ""name"": ""OnLook"",
+                    ""type"": ""Value"",
+                    ""id"": ""ab451174-b2d7-4f11-8426-5891dfa36acc"",
+                    ""expectedControlType"": ""Vector2"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""bd00564c-e09a-4124-9021-8286668ee8ac"",
+                    ""path"": ""<HID::Logitech Logitech Extreme 3D>/stick"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""OnLook"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -133,6 +150,9 @@ public partial class @PlayerController: IInputActionCollection2, IDisposable
         m_Player = asset.FindActionMap("Player", throwIfNotFound: true);
         m_Player_OnMove = m_Player.FindAction("OnMove", throwIfNotFound: true);
         m_Player_OnShoot = m_Player.FindAction("OnShoot", throwIfNotFound: true);
+        // Look
+        m_Look = asset.FindActionMap("Look", throwIfNotFound: true);
+        m_Look_OnLook = m_Look.FindAction("OnLook", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -244,9 +264,59 @@ public partial class @PlayerController: IInputActionCollection2, IDisposable
         }
     }
     public PlayerActions @Player => new PlayerActions(this);
+
+    // Look
+    private readonly InputActionMap m_Look;
+    private List<ILookActions> m_LookActionsCallbackInterfaces = new List<ILookActions>();
+    private readonly InputAction m_Look_OnLook;
+    public struct LookActions
+    {
+        private @PlayerController m_Wrapper;
+        public LookActions(@PlayerController wrapper) { m_Wrapper = wrapper; }
+        public InputAction @OnLook => m_Wrapper.m_Look_OnLook;
+        public InputActionMap Get() { return m_Wrapper.m_Look; }
+        public void Enable() { Get().Enable(); }
+        public void Disable() { Get().Disable(); }
+        public bool enabled => Get().enabled;
+        public static implicit operator InputActionMap(LookActions set) { return set.Get(); }
+        public void AddCallbacks(ILookActions instance)
+        {
+            if (instance == null || m_Wrapper.m_LookActionsCallbackInterfaces.Contains(instance)) return;
+            m_Wrapper.m_LookActionsCallbackInterfaces.Add(instance);
+            @OnLook.started += instance.OnOnLook;
+            @OnLook.performed += instance.OnOnLook;
+            @OnLook.canceled += instance.OnOnLook;
+        }
+
+        private void UnregisterCallbacks(ILookActions instance)
+        {
+            @OnLook.started -= instance.OnOnLook;
+            @OnLook.performed -= instance.OnOnLook;
+            @OnLook.canceled -= instance.OnOnLook;
+        }
+
+        public void RemoveCallbacks(ILookActions instance)
+        {
+            if (m_Wrapper.m_LookActionsCallbackInterfaces.Remove(instance))
+                UnregisterCallbacks(instance);
+        }
+
+        public void SetCallbacks(ILookActions instance)
+        {
+            foreach (var item in m_Wrapper.m_LookActionsCallbackInterfaces)
+                UnregisterCallbacks(item);
+            m_Wrapper.m_LookActionsCallbackInterfaces.Clear();
+            AddCallbacks(instance);
+        }
+    }
+    public LookActions @Look => new LookActions(this);
     public interface IPlayerActions
     {
         void OnOnMove(InputAction.CallbackContext context);
         void OnOnShoot(InputAction.CallbackContext context);
+    }
+    public interface ILookActions
+    {
+        void OnOnLook(InputAction.CallbackContext context);
     }
 }
