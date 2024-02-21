@@ -23,7 +23,8 @@ public class PlayerControler : MonoBehaviour
         Vector3 movement = forward * movementInput.y + right * movementInput.x;
 
         // Move the GameObject
-        transform.Translate(movement * moveSpeed * Time.deltaTime, Space.World);
+        GetComponent<CharacterController>().Move(movement * moveSpeed * Time.deltaTime);
+       // transform.Translate(movement * moveSpeed * Time.deltaTime, Space.World);
 
         // Get look input
         float lookHorizontal = lookInput.x;
@@ -33,11 +34,14 @@ public class PlayerControler : MonoBehaviour
         float yaw = lookHorizontal * lookSpeed * Time.deltaTime;
         float pitch = -lookVertical * lookSpeed * Time.deltaTime; // Inverted for typical first-person controls
 
-        Quaternion currentRotation = transform.rotation;
-        Quaternion targetRotation = Quaternion.Euler(currentRotation.eulerAngles + new Vector3(0, yaw, 0));
+        // Rotate the GameObject
+        transform.Rotate(Vector3.up, yaw);
 
-        // Rotate the GameObject around the camera's right axis
-        transform.rotation = Quaternion.RotateTowards(currentRotation, targetRotation, lookSpeed * Time.deltaTime);
+        // Get the current camera rotation
+        Quaternion cameraRotation = Camera.main.transform.rotation;
+
+        // Apply pitch rotation to the camera
+        Camera.main.transform.rotation = Quaternion.Euler(cameraRotation.eulerAngles.x + pitch, cameraRotation.eulerAngles.y, cameraRotation.eulerAngles.z);
     }
 
     public void OnMove(InputAction.CallbackContext context)
