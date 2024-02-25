@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<Definitions xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <Prefabs>
+    <Prefab xsi:type="MyObjectBuilder_PrefabDefinition">
+      <Id Type="MyObjectBuilder_PrefabDefinition" Subtype="Large_Grid_922" />
+      <CubeGrids>
+        <CubeGrid>
+          <SubtypeName />
+          <EntityId>137647982649150922</EntityId>
+          <PersistentFlags>CastShadows InScene</PersistentFlags>
+          <Name>137647982649150922</Name>
+          <PositionAndOrientation>
+            <Position x="996928.98638919648" y="100549.8272760605" z="1673964.9061274284" />
+            <Forward x="0.152913332" y="0.8203031" z="0.551108062" />
+            <Up x="0.894156754" y="-0.352321863" z="0.2763202" />
+            <Orientation>
+              <X>0.7622768</X>
+              <Y>0.441008061</Y>
+              <Z>-0.308374763</Z>
+              <W>0.35965392</W>
+            </Orientation>
+          </PositionAndOrientation>
+          <LocalPositionAndOrientation xsi:nil="true" />
+          <GridSizeEnum>Large</GridSizeEnum>
+          <CubeBlocks>
+            <MyObjectBuilder_CubeBlock xsi:type="MyObjectBuilder_CubeBlock">
+              <SubtypeName>RailingHalfLeft</SubtypeName>
+              <EntityId>137647982649150923</EntityId>
+              <Name>137647982649150923</Name>
+              <ColorMaskHSV x="0" y="-0.8" z="0" />
+              <SkinSubtypeId>Battered_Armor</SkinSubtypeId>
+            </MyObjectBuilder_CubeBlock>
+          </CubeBlocks>
+          <DisplayName>Large Grid 922</DisplayName>
+          <DestructibleBlocks>true</DestructibleBlocks>
+          <IsRespawnGrid>false</IsRespawnGrid>
+          <LocalCoordSys>0</LocalCoordSys>
+          <TargetingTargets />
+        </CubeGrid>
+      </CubeGrids>
+      <EnvironmentType>None</EnvironmentType>
+    </Prefab>
+  </Prefabs>
+</Definitions>

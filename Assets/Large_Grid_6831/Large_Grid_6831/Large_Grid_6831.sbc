@@ -1,0 +1,46 @@
+<?xml version="1.0"?>
+<Definitions xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <Prefabs>
+    <Prefab xsi:type="MyObjectBuilder_PrefabDefinition">
+      <Id Type="MyObjectBuilder_PrefabDefinition" Subtype="Large_Grid_6831" />
+      <CubeGrids>
+        <CubeGrid>
+          <SubtypeName />
+          <EntityId>143796431152456831</EntityId>
+          <PersistentFlags>CastShadows InScene</PersistentFlags>
+          <Name>143796431152456831</Name>
+          <PositionAndOrientation>
+            <Position x="996929.06535915192" y="100539.42930395357" z="1673959.2053165191" />
+            <Forward x="0.7297128" y="0.354962766" z="0.584396839" />
+            <Up x="0.6135812" y="-0.717097" z="-0.330588877" />
+            <Orientation>
+              <X>0.8067244</X>
+              <Y>0.376024246</Y>
+              <Z>-0.455789834</Z>
+              <W>0.00755331526</W>
+            </Orientation>
+          </PositionAndOrientation>
+          <LocalPositionAndOrientation xsi:nil="true" />
+          <GridSizeEnum>Large</GridSizeEnum>
+          <CubeBlocks>
+            <MyObjectBuilder_CubeBlock xsi:type="MyObjectBuilder_CubeBlock">
+              <SubtypeName>RailingStraight</SubtypeName>
+              <EntityId>143796431152456832</EntityId>
+              <Name>143796431152456832</Name>
+              <ColorMaskHSV x="0" y="-0.8" z="0" />
+              <SkinSubtypeId>Battered_Armor</SkinSubtypeId>
+            </MyObjectBuilder_CubeBlock>
+          </CubeBlocks>
+          <LinearVelocity x="0.221190929" y="-0.341999173" z="-0.06869909" />
+          <AngularVelocity x="-0.25748682" y="-0.126558065" z="-0.199002683" />
+          <DisplayName>Large Grid 6831</DisplayName>
+          <DestructibleBlocks>true</DestructibleBlocks>
+          <IsRespawnGrid>false</IsRespawnGrid>
+          <LocalCoordSys>0</LocalCoordSys>
+          <TargetingTargets />
+        </CubeGrid>
+      </CubeGrids>
+      <EnvironmentType>None</EnvironmentType>
+    </Prefab>
+  </Prefabs>
+</Definitions>

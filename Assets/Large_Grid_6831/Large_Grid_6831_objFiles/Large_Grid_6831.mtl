@@ -1,0 +1,22 @@
+newmtl material_1
+Ka 1.000 1.000 1.000
+Kd 1.000 1.000 1.000
+Ks 0.100 0.100 0.100
+d 1.0
+Ns 95.00
+illum 2
+map_Ka material_1_ca.png
+map_Kd material_1_ca.png
+map_Bump material_1_ng.png
+
+newmtl material_2
+Ka 1.000 1.000 1.000
+Kd 1.000 1.000 1.000
+Ks 0.100 0.100 0.100
+d 1.0
+Ns 95.00
+illum 2
+map_Ka material_2_ca.png
+map_Kd material_2_ca.png
+map_Bump material_1_ng.png
+
